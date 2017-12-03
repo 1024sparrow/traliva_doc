@@ -9,7 +9,19 @@ figure.image{
     width: 100%;
     text-align: center;
 }
+tab{
+    display:block;
+    float:left;
+    width:20px;
+    min-width:30px;
+    min-height:10px;
+}
+ww{ /* Фрагмент кода в теле текста */
+    color: #400;
+    display: inline;
+}
 
+/*.ww {color: #400} Фрагмент кода в теле текста */
 .hll { background-color: #ffffcc }
 .c { color: #408080; font-style: italic } /* Comment */
 .err { color: #FF0000 }
