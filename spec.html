@@ -34,6 +34,10 @@
 
 <figure>
 &lt;html><br/>
+&lt;head><br/>
+&lt;meta name="viewport" content="width=device-width; user-scalable=0;" /><br/>
+...<br/>
+&lt;/head><br/>
 ...<br/>
 &lt;body><br/>
 ...<br/>
@@ -141,9 +145,22 @@ Traliva.init({<br/>
 
 <h2>Формат объекта 'states'</h2>
 
+<!-- Пример: https://traliva.ru/static/tab_apps/django/1.js -->
+<p>Свойство <ww>states</ww> объекта, передаваемого функции <ww>Traliva.init()</ww>, описывает связь состояния веб-приложения и его сетевого адреса URL, задаёт исходное состояние веб-приложения (исходя из его URL), а также именно в нём указываются те обработчики-инициаторы изменений состояния, которые, собственно, определяют всю логику работы веб-приложения (наследуются от класса <ww>Traliva.StateSubscriber</ww>). Перечислим свойства объекта <ww>states</ww>:</p>
+<ul>
+<li><ww>initState</ww></li>
+<li><ww>tree</ww></li>
+<li><ww>initPath</ww></li>
+<li><ww>stringifyState</ww></li>
+<li><ww>_prev_values</ww></li>
+<li><ww>state_subscribers</ww></li>
+</ul>
+
 <h2>Формат описания подсостояний</h2>
 
 <h2>Подгрузка частей веб-приложения</h2>
+
+<h2>Минимальный пример</h2>
 
 <h2>Лицензия</h2>
 
