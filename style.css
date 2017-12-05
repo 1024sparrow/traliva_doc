@@ -20,6 +20,12 @@ ww{ /* Фрагмент кода в теле текста */
     color: #400;
     display: inline;
 }
+subdiv{
+    display:block;
+    padding: 0 0 0 32px;
+    border-left:16px solid #888;
+    border-bottom:2px solid #888;
+}
 
 /*.ww {color: #400} Фрагмент кода в теле текста */
 .hll { background-color: #ffffcc }
