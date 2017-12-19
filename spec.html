@@ -304,14 +304,48 @@ Traliva.init({<br/>
 <h3>Сокращённая форма</h3>
 <p>В случае простеньких веб-приложений, которые делаются "по-быстрому на коленке", или для которых ещё не продуман дизайн для разных размеров экрана и платформ, имеет смысл упростить структуру объекта, передаваесого в функцию <ww>Traliva.init()</ww>. Приведём минимальный пример веб-приложения.</p>
 <figure>
-function MyWidget()
-Traliva.init({
-    layouts: 'my_widget',
-    widgets: {
-        my_widget: MyWidget
-    }
+function MyWidget(p_wContainer){<br/>
+<tab></tab>Traliva.WidgetStateSubscriber.call(this, p_wContainer);<br/>
+<tab></tab>this._enabled = false;<br/>
+<br/>
+<tab></tab>p_wContainer.setContent(Traliva.createElement(<br/>
+<tab></tab><tab></tab>'&lt;p>Hello World!&lt;/p>&lt;div traliva="m_myButton" class="my_button">Не включено&lt;/div>',<br/>
+<tab></tab><tab></tab>this<br/>
+<tab></tab>));<br/>
+<tab></tab>this.m_myButton.addEventListener('click', function(self){return function(){<br/>
+<tab></tab><tab></tab>self.onBnClicked();<br/>
+<tab></tab>};}(this));<br/>
+};<br/>
+MyWidget.prototype = Object.create(Traliva.WidgetStateSubscriber.prototype);<br/>
+MyWidget.prototype.constructor = MyWidget;<br/>
+MyWidget.prototype.processStateChanges = function(s){<br/>
+<tab></tab>// здесь мы можем получать "пинки" от других компонентов... , но у нас нет других компонентов - это минимальный пример<br/>
+};<br/>
+MyWidget.prototype.onBnClicked = function(){<br/>
+<tab></tab>this._enabled = !this._enabled;<br/>
+<tab></tab>this.m_myButton.innerHTML = this._enabled : 'Включено' : 'Не включено';<br/>
+};<br/>
+<br/>
+Traliva.init({<br/>
+<tab></tab>layouts: 'my_widget',<br/>
+<tab></tab>widgets: {<br/>
+<tab></tab><tab></tab>my_widget: MyWidget<br/>
+<tab></tab>}<br/>
 });
 </figure>
+<p>Так вот. Если у нас в объекте, передаваемом параметром в <ww>Traliva.init()</ww>, не указано свойство <ww>get_layout</ww>, то свойство <ww>layouts</ww> трактуется не как объект, в котором в разных свойствах содержатся разные лэйауты, а как сам лэйаут.</p>
+
+<h2>Низкоуровневые вещи</h2>
+<h3>Работа с состоянием и регистрацией/обработкой его изменений</h3>
+<h3>Пользовательские виджеты</h3>
+<h4>Простые виджеты</h4>
+<h4>Составные виджеты</h4>
+<h3>API работы с лэйаутами</h3>
+<h4>Класс Traliva.Strip</h4>
+<h4>Класс Traliva.Stack</h4>
+<h3>Утилиты</h3>
+<h4>Traliva.createElement()</h4>
+<h4>Traliva.ajax()</h4>
 
 
 <!--<h2>Низкоуровневые вещи</h2>
