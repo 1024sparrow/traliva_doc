@@ -360,8 +360,81 @@ Traliva.init({<br/>
 
 <h2>Низкоуровневые вещи</h2>
 <h3>Работа с состоянием и регистрацией/обработкой его изменений</h3>
+<p>Для обработки изменений состояния веб-приложения используются классы, отнаследованные от класса <ww>Traliva.StateSubscriber</ww> (подписчик на изменения состояния). При описании своего класса подписчика надо не забыть сделать следующие вещи:</p>
+<ul>
+<li>Отнаследоваться от <ww>Traliva.StateSubscriber</ww></li>
+<li>В конструкторе вашего класса явно вызвать конструктор базового класса</li>
+<li>Переопределить метод базового класса <ww>processStateChanges</ww> <span style="color:#666">Если метод не будет переопределён, Тралива будет ругаться в консоли - переопределение данного метода является обязательным</span></li>
+</ul>
+<p>Если в ходе обработки изменения состояния вы меняете объект состояние (доступен как <ww>this._state</ww>), необходимо оповестить другие подписчики об этих изменениях. Для этого вы должны после модификации состояния вызывать метод <ww>_registerStateChanges()</ww>, определённый в базовом классе.</p>
+<p>Ваш подписчик должен выглядеть как-то так:</p>
+<figure>
+<span style="color:#666">// конструктор</span><br/>
+function MyStateSubscriber(){<br/>
+<tab></tab>Traliva.StateSubscriber.call(this);<br/>
+<tab></tab>this._text = undefined;<br/>
+}<br/>
+<br/>
+<span style="color:#666">// задаём наследование от класса Traliva.StateSubscriber</span><br/>
+MyStateSubscriber.prototype = Object.create(Traliva.StateSubscriber.prototype);<br/>
+MyStateSubscriber.prototype.constructor = MyStateSubscriber;<br/>
+<br/>
+<span style="color:#666">// переопределяем метод обработки изменений состояния</span><br/>
+MyStateSubscriber.prototype.processStateChanges = function(s){ <span style="color:#666">// s - ссылка на объект состояния, которая всегда доступна как this._state</span><br/>
+<tab></tab><span style="color:#666">// проверяем, есть ли изменения в тех свойствах состояния, которые интересуют нашего подписчика</span><br/>
+<tab></tab><span style="color:#666">// если таких изменений нет, выходим</span><br/>
+<tab></tab>if (s.text === this._text)<br/>
+<tab></tab><tab></tab>return;<br/>
+<br/>
+<tab></tab><span style="color:#666">.... обрабатываем изменение свойства text объекта состояния ....</span><br/>
+<tab></tab><span style="color:#666">.... this._registerStateChanges(); ....</span><br/><br/>
+<tab></tab>this._text = s.text;<br/>
+}
+</figure>
+<p>Обращаем ваше внимание на то, что реализация метода <ww>processStateChanges()</ww> состоит из двух частей:</p>
+<ol>
+<li>Фильтрация изменений, которые важны для данного подписчика</li>
+<li>Обработка изменений</li>
+</ol>
 <h4>Работа с приватными подсостояниями у подписчиков</h4>
 <h3>Пользовательские виджеты</h3>
+<p>Пользовательские виджеты представлены классом <ww>Traliva.WidgetStateSubscriber</ww>. Для определения своего виджета вам необходимо отнаследоваться от этого класса.</p>
+<p>Набор параметров вашего класса не может быть произвольным - это связано с тем, что он будет определённым образом использоваться фреймворком Тралива. Конструктор вашего класса виджета должен принимать следующие параметры:</p>
+<ol>
+<li>p_wContainer <span style="color:#666">- экземпляр виджета, которому ваш класс может задать свой контент. Вызовите у него метод setContent()  и передайте параметром тот виджет, который должен туда встроиться</span></li>
+<li>p_options <span style="color:#666">- это объект опций виджета, указанный в объекте, описывающем виджет (Traliva.init())</span></li>
+</ol>
+<p>Пример виджета:</p>
+<figure>
+<!--function MyWidget(p_wContainer, p_options){<br/>
+<tab></tab>Traliva.WidgetStateSubscriber.call(this, p_wContainer);<br/>
+<tab></tab>var e = document.createElement('div');<br/>
+<tab></tab>e.innerHTML = 'Нажмите сюда';<br/>
+<tab></tab>p_wContainer.setContent(e);<br/>
+}<br/>
+MyWidget.prototype = Object.create(Traliva.WidgetStateSubscriber.prototype);<br/>
+MyWidget.prototype.constructor = MyWidget;<br/>
+MyWidget.prototype.processStateChanges = function(s){<br/>
+<tab></tab><span style="color:#666;">....</span><br/>
+}<br/>
+MyWidget.prototype.onMyBnClicked = function(){
+}-->
+<span style="color:#666;">// Класс виджета Button. Параметром конструктора передаётся id, который должен быть записан корневое свойство объекта состояния, имя этого свойства также передаётся параметром</span><br/>
+function Button(p_wContainer, p_options){<span style="color:#666;">// options: title, id, valueVarName - имя свойства, в которое сохранять значение</span><br/>
+<tab></tab>Traliva.WidgetStateSubscriber.call(this, p_wContainer);<br/>
+<tab></tab>var e = Traliva.createElement(p_options.title);<br/>
+<tab></tab>e.className = 'bn';<br/>
+<tab></tab>e.addEventListener('click', function(self, opt){return function(){<br/>
+<tab></tab><tab></tab>self._state[opt.valueVarName] = opt.id;<br/>
+<tab></tab><tab></tab>self._registerStateChanges();<br/>
+<tab></tab>};}(this, p_options));<br/>
+<tab></tab>p_wContainer.setContent(e);<br/>
+}<br/>
+Button.prototype = Object.create(Traliva.WidgetStateSubscriber.prototype);<br/>
+Button.prototype.constructor = Button;
+</figure>
+<p>Класс <ww>Traliva.WidgetStateSubscriber</ww> наследуется от <ww>Traliva.StateSubscriber</ww>, но, в отличие от последнего, допускает непереопределение метода <ww>processStateChanges()</ww>.</p>
+
 <h4>Простые виджеты</h4>
 <h4>Составные виджеты</h4>
 <h3>API работы с лэйаутами</h3>
