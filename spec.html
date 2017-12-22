@@ -442,6 +442,26 @@ Button.prototype.constructor = Button;
 <h4>Класс Traliva.Stack</h4>
 <h3>Утилиты</h3>
 <h4>Traliva.createElement()</h4>
+<p>Функция <ww>Traliva.createElement()</ww> возвращает DOM-элемент (тэг <ww>div</ww>), внутри которого находится переданный параметром HTML-код.</p>
+<p>Принимает следущие параметры:</p>
+<ol>
+<li>HTML-код (тип строка)</li>
+<li>необяз.; объект, в котором сохранить экземпляры созданных дочерних DOM-элементов (тип Объект)</li>
+<li>необяз.; CSS-класс, который нужно задать создаваемому DOM-элементу</li>
+</ol>
+<p>Насчёт второго параметра - объекта, в котором сохранять экземпляры созданных дочерних DOM-элементов. В нём сохраняются только те элементы, для которых в HTML-коде указано значение атрибута <ww>traliva</ww>. Пример:</p>
+<figure>
+var obj = {};<br/>
+var e = Traliva.createElement(<br/>
+<tab></tab>'&lt;p class="my_p" traliva="title">&lt;/p>&lt;p traliva="pair">&lt;span traliva="first">&lt;/span> - &lt;span traliva="second">&lt;/span>&lt;/p>',<br/>
+<tab></tab>obj,<br/>
+<tab></tab>'my_div');
+</figure>
+<p>Что мы имеем в данном примере:</p>
+<ul>
+<li><ww>e</ww> - DOM-элемент (тэг <ww>div</ww>), CSS-класс у него <ww>my_div</ww>, в нём находятся два элемента с тэгом <ww>p</ww>, во втором из них два элемента с тэгом <ww>span</ww></li>
+<li>У объекта <ww>obj</ww> появились четыре свойства: <ww>title</ww>, <ww>pair</ww>, <ww>first</ww> и <ww>second</ww> - это DOM-элементы, входящие в состав DOM-элемента <ww>e</ww>.</li>
+</ul>
 <h4>Traliva.ajax()</h4>
 
 
