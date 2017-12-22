@@ -84,12 +84,23 @@ Traliva.init({<br/>
 <tab></tab>...<br/>
 });
 </figure>
-В описании лэйаута могут упоминаться пользовательские виджеты (наследуются от класса <ww>Traliva.WidgetStateSubscriber</ww>) - в лэйауте указывается их строковый идентификатор (вы сами его задаёте), по которому функция <ww>Traliva.init()</ww> будет искать в свойстве <ww>widgets</ww> передаваемого параметром объекта. Свойство <ww>widgets</ww> представляет собой объект, в котором идентификаторам виджетов ставится в соответствие пара (т.е. массив) из функции-конструктора виджета и (опционально) строки/функции/объекта, определяющего подсостояние, с которым виджет работает (см. 'Формат определения подсостояний' ниже). Если подсостояние не задаётся, то можно передавать не пару (массив), а функцию-конструктор виджета.
+В описании лэйаута могут упоминаться пользовательские виджеты (наследуются от класса <ww>Traliva.WidgetStateSubscriber</ww>) - в лэйауте указывается их строковый идентификатор (вы сами его задаёте), по которому функция <ww>Traliva.init()</ww> будет искать в свойстве <ww>widgets</ww> передаваемого параметром объекта. Свойство <ww>widgets</ww> представляет собой объект, в котором идентификаторам виджетов ставится в соответствие объект, описывающий виджет. Объект, опиывающий виджет, имеет следующие свойства:
+<ul>
+<li>constructor <span style="color:#666;">- конструктор виджета</span></li>
+<li>options <span style="color:#666;">- необяз; объект параметров, который будет передан конструктору виджета (например, заголовок, цвета, режим здесь могут быть указаны)</span></li>
+<li>substate <span style="color:#666;">- необяз; подсостояние</span></li>
+</ul>
+Если опций нет и подсостояние не используется, может использоваться сокращённая форма: вместо объекта, описывающего виджет, использовать конструктор виджета.
+
 <figure>
 Traliva.init({<br/>
 <tab></tab>...<br/>
 <tab></tab>widgets: {<br/>
-<tab></tab><tab></tab>'id виджета': [MyWidget, 'mySubstate/helloText'],<br/>
+<tab></tab><tab></tab>'id виджета': {<br/><!--[MyWidget, 'mySubstate/helloText'],<br/>-->
+<tab></tab><tab></tab><tab></tab>constructor: MyWidget,<br/>
+<tab></tab><tab></tab><tab></tab>options: {id:'catalogue', title:'Каталог', valueVarName:'mode'},<br/>
+<tab></tab><tab></tab><tab></tab>substate: 'mySubstate/modeObject'<br/>
+<tab></tab><tab></tab>},<br/>
 <tab></tab><tab></tab>'id другого виджета': MyWidget2<br/>
 <tab></tab>},<br/>
 <tab></tab>...<br/>
@@ -323,7 +334,7 @@ MyWidget.prototype.processStateChanges = function(s){<br/>
 };<br/>
 MyWidget.prototype.onBnClicked = function(){<br/>
 <tab></tab>this._enabled = !this._enabled;<br/>
-<tab></tab>this.m_myButton.innerHTML = this._enabled : 'Включено' : 'Не включено';<br/>
+<tab></tab>this.m_myButton.innerHTML = this._enabled ? 'Включено' : 'Не включено';<br/>
 };<br/>
 <br/>
 Traliva.init({<br/>
