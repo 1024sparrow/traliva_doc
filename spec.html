@@ -432,6 +432,31 @@ MyStateSubscriber.prototype.processStateChanges = function(s){ <span style="colo
 <p>Это идентификаторы, характеризующие установленный лэйаут.</p>
 
 <a id="Работа с приватными подсостояниями у подписчиков"><h4>Работа с приватными подсостояниями у подписчиков</h4></a>
+<p>Внутри <ww>Traliva.StateSubscriber</ww>-а может быть размещён собственный издатель(или даже несколько, хотя потребность в этом, наверное, уже будет сигнализировать о кривизне архитектуры вашего приложения) и набор собственных (извне невидных) подписчиков. Таким образом, подписчик на изменения объекта состояния может выступать в роли прокси, прокидывая только в случае необходимости модифицированный объект состояния другим подписчикам, которые могут быть и недоступны за пределами этого подписчика.</p>
+<p>Вот как примерно это выгладит:</p>
+<figure>
+function MyComplexSubscriber(){<br/>
+<tab></tab>Traliva.StateSubscriber.call(this);<br/>
+<tab></tab>this.__MyComplexSubscriber = {<br/>
+<tab></tab><tab></tab>publisher: new Traliva.StatePublisher()<br/>
+<tab></tab>};<br/>
+<tab></tab>this.__MyComplexSubscriber.publisher.setState({<br/>
+<tab></tab><tab></tab>text: 'дефолтный текст'<br/>
+<tab></tab>});<br/>
+<tab></tab>this.__MyComplexSubscriber.publisher.registerSubscriber(new MyFirstPrivateSubscriber());<br/>
+<tab></tab>this.__MyComplexSubscriber.publisher.registerSubscriber(new MySecondPrivateSubscriber());<br/>
+<tab></tab>this.__MyComplexSubscriber._selectedId;<br/>
+}<br/>
+MyComplexSubscriber.prototype = Object.create(Traliva.StateSubscriber);<br/>
+MyComplexSubscriber.prototype.constructor = MyComplexSubscriber;<br/>
+MyComplexSubscriber.prototype.processStateChanges = function(s){<br/>
+<tab></tab>if (this.__MyComplexSubscriber._isSelected !== s.selected){<br/>
+<tab></tab><tab></tab>this.__MyComplexSubscriber._selectedId = s.selected;<br/>
+<tab></tab><tab></tab>this.__MyComplexSubscriber.publisher.setState({text: s.text[s.selected]});<br/>
+<tab></tab>}<br/>
+}
+</figure>
+
 <a id="Пользовательские виджеты"><h3>Пользовательские виджеты</h3></a>
 <p>Пользовательские виджеты представлены классом <ww>Traliva.WidgetStateSubscriber</ww>. Для определения своего виджета вам необходимо отнаследоваться от этого класса.</p>
 <p>Набор параметров вашего класса не может быть произвольным - это связано с тем, что он будет определённым образом использоваться фреймворком Тралива. Конструктор вашего класса виджета должен принимать следующие параметры:</p>
