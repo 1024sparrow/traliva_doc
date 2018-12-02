@@ -62,8 +62,14 @@ widgets: {
 },
 ...</c>
 <p>В этом случае класс LikeStripContainer (в пространстве имён TralivaKit) должен иметь следующий статический метод:</p>
-<c>LikeStripContainer.widgetsFields = function(){
+<!--<c>LikeStripContainer.widgetsFields = function(){
     return ['toolbar', 'addonToolbar', 'items', 'dynamicItems'];
-}</c>
+}</c>-->
+<c>LikeStripContainer.widgetsFields = [ // <-- здесь не надо использовать символ '$'
+    'toolbar', 'addonToolbar', 'items', 'dynamicItems'
+];
+</c>
+
+<p>Если дочерние виджеты строятся по данным в объекте состояния (а не определены в лейауте) и, в свою очередь, также являются контейнерами, то их дочерние виджеты могут строиться ТОЛЬКО по данным в объекте состояния.</p>
 </body>
 </html>
