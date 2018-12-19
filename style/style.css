@@ -11,6 +11,12 @@ c{
     color: #48f;
     white-space: pre;
 }
+c prebash{
+    color: #ffa;
+}
+c comment{
+    color: #666;
+}
 /*подсветка текста*/
 hl{
     color: #faa;
